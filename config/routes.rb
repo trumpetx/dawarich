@@ -44,6 +44,7 @@ Rails.application.routes.draw do
 
     resources :integrations, only: [:index]
     patch 'integrations', to: 'integrations#update'
+    patch 'pushover', to: 'pushover#update'
 
     resources :background_jobs, only: %i[index create]
     patch 'background_jobs', to: 'background_jobs#update'

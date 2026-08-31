@@ -1522,6 +1522,12 @@ es:
         display_a_gem_icon_next_to_your_profile_to_show: Mostrar un icono de gema junto a tu perfil para mostrar tu estado de apoyo.
         general_settings: Ajustes generales
         save_changes: Guardar cambios
+    pushover:
+      update:
+        verified: Credenciales de Pushover verificadas
+        disabled: Notificaciones de Pushover desactivadas
+        cleared: Credenciales de Pushover borradas
+        unavailable: Pushover requiere la función Family
     integrations:
       index:
         services_nav: Servicios de integración
@@ -1530,6 +1536,7 @@ es:
           immich: Immich
           photoprism: PhotoPrism
           airtrail: AirTrail
+          pushover: Pushover
         status_connected: Conectado
         status_failed: El último intento de conexión falló
         immich_photoprism_integrations: Integraciones Immich y Photoprism
@@ -1569,6 +1576,17 @@ es:
         refresh_photo_cache: Actualizar caché de fotos
         save_test_connection: Guardar y probar conexión
         sync_now: Sincronizar ahora
+        pushover_integration: Integración de Pushover
+        pushover_application_token: Token API de la aplicación
+        pushover_application_token_hint: Crea una aplicación en pushover.net y pega aquí su token API.
+        pushover_recipient_key: Clave de usuario o grupo
+        pushover_recipient_key_hint: Tu clave de usuario o una clave de grupo de pushover.net.
+        pushover_enabled: Enviar notificaciones familiares vía Pushover
+        pushover_secret_saved: Guardado — deja en blanco para conservarlo
+        pushover_save_validate: Guardar y validar
+        pushover_clear_title: Borrar credenciales
+        pushover_clear_hint: Elimina las credenciales de Pushover almacenadas en esta instancia.
+        pushover_clear_credentials: Borrar credenciales
         settings: Ajustes
     subscriptions:
       index:
@@ -3387,6 +3405,12 @@ es:
         an_error_occurred: Se ha producido un error
         not_authorized: No tienes autorización para responder a esta solicitud
         no_longer_actionable: Esta solicitud ha caducado o ya ha sido respondida
+        accepted_title: Solicitud de ubicación aceptada
+        accepted_content: "%{email} aceptó tu solicitud de ubicación."
+        declined_title: Solicitud de ubicación rechazada
+        declined_content: "%{email} rechazó tu solicitud de ubicación."
+        expired_title: Solicitud de ubicación caducada
+        expired_content: "Tu solicitud de ubicación a %{email} ha caducado."
       update_location_sharing:
         update_failed: Falló actualizar la configuración de seguimiento de ubicación
         unexpected_error: Ocurrió un error al actualizar el seguimiento de ubicación

@@ -189,6 +189,192 @@ RSpec.describe 'Settings::Integrations', type: :request do
     end
   end
 
+  describe 'Pushover integration' do
+    let(:user) { create(:user) }
+    let(:token) { 'a' * 30 }
+    let(:key) { 'b' * 30 }
+    let(:validate_url) { 'https://api.pushover.net/1/users/validate.json' }
+
+    before { sign_in user }
+
+    def pushover_link(body)
+      body[/<a[^>]*data-testid="integration-pushover"[^>]*>/]
+    end
+
+    describe 'GET /settings/integrations' do
+      it 'lists pushover when the family feature is available' do
+        allow(DawarichSettings).to receive(:family_feature_available_for?).and_return(true)
+
+        get settings_integrations_path
+
+        expect(response.body).to include('data-testid="integration-pushover"')
+      end
+
+      it 'hides pushover when the family feature is unavailable' do
+        allow(DawarichSettings).to receive(:family_feature_available_for?).and_return(false)
+
+        get settings_integrations_path
+
+        expect(response.body).not_to include('data-testid="integration-pushover"')
+      end
+
+      it 'renders the pushover pane with empty credential fields' do
+        get settings_integrations_path(service: 'pushover')
+
+        expect(response.body).to include('name="pushover[application_token]"')
+        expect(response.body).to include('name="pushover[recipient_key]"')
+        expect(response.body).to include('uQiRzpo4DXghDmr9QzzfQu27cmVRsG')
+        expect(response.body).to include('name="pushover[enabled]"')
+      end
+
+      it 'never renders saved secrets' do
+        create(:service_setting, :pushover, user: user, active: true)
+
+        get settings_integrations_path(service: 'pushover')
+
+        expect(response.body).not_to include(token)
+        expect(response.body).not_to include(key)
+      end
+
+      it 'indicates saved secrets through placeholders' do
+        create(:service_setting, :pushover, user: user, active: true)
+
+        get settings_integrations_path(service: 'pushover')
+
+        expect(response.body.scan(I18n.t('settings.integrations.index.pushover_secret_saved')).length).to eq(2)
+      end
+
+      it 'marks pushover connected from connection_status' do
+        create(:service_setting, :pushover, user: user, active: true, config: { 'connection_status' => 'ok' })
+
+        get settings_integrations_path
+
+        expect(pushover_link(response.body)).to include('data-status="connected"')
+      end
+
+      it 'marks pushover failed from connection_status' do
+        create(:service_setting, :pushover, user: user, active: true, config: { 'connection_status' => 'failed' })
+
+        get settings_integrations_path
+
+        expect(pushover_link(response.body)).to include('data-status="failed"')
+      end
+    end
+
+    describe 'PATCH /settings/pushover' do
+      it 'saves, validates and activates when enable is checked' do
+        stub_request(:post, validate_url)
+          .to_return(status: 200, body: { status: 1 }.to_json, headers: { 'Content-Type' => 'application/json' })
+
+        patch '/settings/pushover',
+              params: { pushover: { application_token: token, recipient_key: key, enabled: '1' } }
+
+        expect(response).to redirect_to(settings_integrations_path(service: 'pushover'))
+        setting = user.service_settings.service_notifications.find_by(provider: 'pushover')
+        expect(setting.active).to be(true)
+        expect(setting.application_token).to eq(token)
+        expect(setting.recipient_key).to eq(key)
+        expect(setting.config['connection_status']).to eq('ok')
+        follow_redirect!
+        expect(flash[:notice]).to be_present
+      end
+
+      it 'retains secrets when credential fields are left blank' do
+        create(:service_setting, :pushover, user: user, active: true)
+        stub_request(:post, validate_url)
+          .to_return(status: 200, body: { status: 1 }.to_json, headers: { 'Content-Type' => 'application/json' })
+
+        patch '/settings/pushover', params: { pushover: { application_token: '', recipient_key: '', enabled: '1' } }
+
+        setting = user.service_settings.service_notifications.find_by(provider: 'pushover')
+        expect(setting.application_token).to eq(token)
+        expect(setting.recipient_key).to eq(key)
+      end
+
+      it 'disables without deleting credentials when enable is unchecked' do
+        create(:service_setting, :pushover, user: user, active: true)
+
+        patch '/settings/pushover', params: { pushover: { application_token: '', recipient_key: '', enabled: '0' } }
+
+        setting = user.service_settings.service_notifications.find_by(provider: 'pushover')
+        expect(setting.active).to be(false)
+        expect(setting.application_token).to eq(token)
+        expect(setting.recipient_key).to eq(key)
+      end
+
+      it 'destroys the row when clear is set' do
+        create(:service_setting, :pushover, user: user, active: true)
+
+        patch '/settings/pushover', params: { pushover: { clear: '1' } }
+
+        expect(user.service_settings.service_notifications.where(provider: 'pushover')).to be_empty
+        expect(response).to redirect_to(settings_integrations_path(service: 'pushover'))
+      end
+
+      it 'shows a bounded alert on permanent validation failure' do
+        stub_request(:post, validate_url)
+          .to_return(status: 400, body: { status: 0, request: 'r' * 60 }.to_json,
+                     headers: { 'Content-Type' => 'application/json' })
+
+        patch '/settings/pushover',
+              params: { pushover: { application_token: token, recipient_key: key, enabled: '1' } }
+
+        expect(response).to redirect_to(settings_integrations_path(service: 'pushover'))
+        follow_redirect!
+        expect(flash[:alert]).to start_with('Pushover')
+        expect(flash[:alert].bytesize).to be <= 512
+        expect(flash[:alert]).not_to include(token)
+        setting = user.service_settings.service_notifications.find_by(provider: 'pushover')
+        expect(setting.config['connection_status']).to eq('failed')
+      end
+
+      it 'shows a bounded alert on temporary validation failure' do
+        stub_request(:post, validate_url).to_raise(Timeout::Error)
+
+        patch '/settings/pushover',
+              params: { pushover: { application_token: token, recipient_key: key, enabled: '1' } }
+
+        expect(response).to redirect_to(settings_integrations_path(service: 'pushover'))
+        follow_redirect!
+        expect(flash[:alert]).to start_with('Pushover')
+        expect(flash[:alert].bytesize).to be <= 512
+        setting = user.service_settings.service_notifications.find_by(provider: 'pushover')
+        expect(setting.config['connection_status']).to eq('failed')
+      end
+
+      it 'rejects malformed credentials without saving' do
+        patch '/settings/pushover',
+              params: { pushover: { application_token: 'short', recipient_key: key, enabled: '1' } }
+
+        expect(response).to redirect_to(settings_integrations_path(service: 'pushover'))
+        follow_redirect!
+        expect(flash[:alert].bytesize).to be <= 512
+        expect(user.service_settings.service_notifications.where(provider: 'pushover')).to be_empty
+      end
+
+      it 'rejects users without the family feature' do
+        allow(DawarichSettings).to receive(:family_feature_available_for?).and_return(false)
+
+        patch '/settings/pushover',
+              params: { pushover: { application_token: token, recipient_key: key, enabled: '1' } }
+
+        expect(response).to redirect_to(settings_integrations_path)
+        follow_redirect!
+        expect(flash[:alert]).to be_present
+        expect(user.service_settings.service_notifications.where(provider: 'pushover')).to be_empty
+      end
+
+      it 'redirects inactive users' do
+        user.update(status: :inactive, active_until: 1.day.ago)
+
+        patch '/settings/pushover',
+              params: { pushover: { application_token: token, recipient_key: key, enabled: '1' } }
+
+        expect(response).to redirect_to(root_path)
+      end
+    end
+  end
+
   describe 'GET /settings/integrations' do
     let(:user) { create(:user) }
 

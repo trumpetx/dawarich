@@ -53,6 +53,22 @@ RSpec.describe Families::CreateLocationRequest do
         expect(notification.content).to include('demande votre localisation', 'Voir la demande')
       end
 
+      it 'routes the notification through Families::Notify in the target user locale' do
+        target_user.update!(settings: { 'locale' => 'fr' })
+        notifier = instance_double(Families::Notify, call: nil)
+        allow(Families::Notify).to receive(:new).and_return(notifier)
+
+        result
+
+        expect(Families::Notify).to have_received(:new).with(
+          user: target_user,
+          kind: :info,
+          title: I18n.t('services.families.create_location_request.location_request', locale: :fr),
+          content: include('demande votre localisation', 'Voir la demande')
+        )
+        expect(notifier).to have_received(:call)
+      end
+
       it 'enqueues an email' do
         expect { result }.to have_enqueued_mail(FamilyMailer, :location_request)
       end

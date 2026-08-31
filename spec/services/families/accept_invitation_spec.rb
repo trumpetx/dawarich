@@ -43,6 +43,31 @@ RSpec.describe Families::AcceptInvitation do
         expect(family.creator.notifications.last.title).to eq('New Family Member!')
       end
 
+      it 'routes both recipient notifications through Families::Notify in their locales' do
+        invitee.update!(settings: { 'locale' => 'fr' })
+        family.creator.update!(settings: { 'locale' => 'en' })
+        notifier = instance_double(Families::Notify, call: nil)
+        allow(Families::Notify).to receive(:new).and_return(notifier)
+
+        service.call
+
+        expect(Families::Notify).to have_received(:new).with(
+          user: invitee,
+          kind: :info,
+          title: I18n.t('services.families.accept_invitation.welcome_to_family', locale: :fr),
+          content: I18n.t('services.families.accept_invitation.you_ve_joined_the_family_name',
+                          name: family.name, locale: :fr)
+        )
+        expect(Families::Notify).to have_received(:new).with(
+          user: family.creator,
+          kind: :info,
+          title: I18n.t('services.families.accept_invitation.new_family_member', locale: :en),
+          content: I18n.t('services.families.accept_invitation.email_has_joined_your_family',
+                          email: invitee.email, locale: :en)
+        )
+        expect(notifier).to have_received(:call).twice
+      end
+
       it 'returns true' do
         expect(service.call).to be true
       end

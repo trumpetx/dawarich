@@ -7,6 +7,12 @@ RSpec.describe ServiceSetting do
     it { is_expected.to belong_to(:user) }
   end
 
+  describe 'service enum' do
+    it 'preserves the exact persisted mapping' do
+      expect(described_class.services).to eq('geocoding' => 0, 'notifications' => 1)
+    end
+  end
+
   describe 'validations' do
     it 'rejects an unknown provider for the geocoding service' do
       setting = build(:service_setting, provider: 'osm')
@@ -58,6 +64,59 @@ RSpec.describe ServiceSetting do
       duplicate = build(:service_setting, user: existing.user, provider: existing.provider)
 
       expect(duplicate).not_to be_valid
+    end
+
+    it 'accepts pushover notifications with both 30-character alphanumeric credentials' do
+      expect(build(:service_setting, :pushover)).to be_valid
+    end
+
+    it 'accepts uppercase letters and digits in pushover credentials' do
+      setting = build(
+        :service_setting,
+        :pushover,
+        application_token: 'A1' * 15,
+        recipient_key: 'B2' * 15
+      )
+
+      expect(setting).to be_valid
+    end
+
+    it 'requires a 30-character alphanumeric application token for pushover' do
+      expect(build(:service_setting, :pushover, application_token: nil)).not_to be_valid
+      expect(build(:service_setting, :pushover, application_token: 'a' * 29)).not_to be_valid
+      expect(build(:service_setting, :pushover, application_token: "#{'a' * 29}-")).not_to be_valid
+    end
+
+    it 'rejects a 31-character pushover credential' do
+      expect(build(:service_setting, :pushover, application_token: 'a' * 31)).not_to be_valid
+    end
+
+    it 'requires a 30-character alphanumeric recipient key for pushover' do
+      expect(build(:service_setting, :pushover, recipient_key: nil)).not_to be_valid
+      expect(build(:service_setting, :pushover, recipient_key: 'b' * 29)).not_to be_valid
+      expect(build(:service_setting, :pushover, recipient_key: "#{'b' * 29}-")).not_to be_valid
+    end
+
+    it 'rejects other notification providers' do
+      setting = build(:service_setting, :pushover, provider: 'other')
+
+      expect(setting).not_to be_valid
+      expect(setting.errors[:provider]).to be_present
+    end
+
+    it 'validates against the current service after the service changes' do
+      setting = build(:service_setting)
+      expect(setting).to be_valid
+
+      setting.assign_attributes(
+        service: :notifications,
+        provider: 'pushover',
+        config: {},
+        application_token: 'a' * 30,
+        recipient_key: 'b' * 30
+      )
+
+      expect(setting).to be_valid
     end
   end
 
@@ -179,6 +238,36 @@ RSpec.describe ServiceSetting do
 
       expect(setting.api_key).to be_nil
       expect(setting.credentials).to be_nil
+    end
+
+    it 'round-trips pushover credentials through the credentials JSON' do
+      setting = build(:service_setting, :pushover)
+
+      expect(setting.application_token).to eq('a' * 30)
+      expect(setting.recipient_key).to eq('b' * 30)
+    end
+
+    it 'clears one pushover credential without clearing the other' do
+      setting = build(:service_setting, :pushover)
+
+      setting.application_token = nil
+
+      expect(setting.application_token).to be_nil
+      expect(setting.recipient_key).to eq('b' * 30)
+    end
+
+    it 'does not store pushover credentials in plaintext' do
+      setting = create(:service_setting, :pushover)
+
+      raw = ActiveRecord::Base.connection.select_value(
+        "SELECT credentials FROM service_settings WHERE id = #{setting.id}"
+      )
+
+      expect(raw).to be_present
+      expect(raw).not_to include('a' * 30)
+      expect(raw).not_to include('b' * 30)
+      expect(setting.reload.application_token).to eq('a' * 30)
+      expect(setting.recipient_key).to eq('b' * 30)
     end
   end
 

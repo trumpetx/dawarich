@@ -48,6 +48,31 @@ RSpec.describe Families::Memberships::Destroy do
         expect(user.notifications.last.title).to eq('Family Member Left')
       end
 
+      it 'routes member-left notifications through Families::Notify in each recipient locale' do
+        member.update!(settings: { 'locale' => 'fr' })
+        user.update!(settings: { 'locale' => 'en' })
+        notifier = instance_double(Families::Notify, call: nil)
+        allow(Families::Notify).to receive(:new).and_return(notifier)
+
+        service.call
+
+        expect(Families::Notify).to have_received(:new).with(
+          user: member,
+          kind: :info,
+          title: I18n.t('services.families.memberships.destroy.left_family', locale: :fr),
+          content: I18n.t('services.families.memberships.destroy.you_ve_left_the_family_family_name',
+                          family_name: family.name, locale: :fr)
+        )
+        expect(Families::Notify).to have_received(:new).with(
+          user: user,
+          kind: :info,
+          title: I18n.t('services.families.memberships.destroy.family_member_left', locale: :en),
+          content: I18n.t('services.families.memberships.destroy.email_has_left_the_family_family_name',
+                          email: member.email, family_name: family.name, locale: :en)
+        )
+        expect(notifier).to have_received(:call).twice
+      end
+
       it 'returns true' do
         expect(service.call).to be true
       end
@@ -62,6 +87,35 @@ RSpec.describe Families::Memberships::Destroy do
       let(:service) { described_class.new(user: user, member_to_remove: member) }
 
       before { allow(DawarichSettings).to receive(:self_hosted?).and_return(false) }
+
+      it 'routes member-removed notifications through Families::Notify in each recipient locale' do
+        member.update!(settings: { 'locale' => 'fr' })
+        user.update!(settings: { 'locale' => 'en' })
+        notifier = instance_double(Families::Notify, call: nil)
+        allow(Families::Notify).to receive(:new).and_return(notifier)
+
+        service.call
+
+        expect(Families::Notify).to have_received(:new).with(
+          user: member,
+          kind: :info,
+          title: I18n.t('services.families.memberships.destroy.removed_from_family', locale: :fr),
+          content: I18n.t(
+            'services.families.memberships.destroy.you_have_been_removed_from_the_family_family_name_by',
+            family_name: family.name, email: user.email, locale: :fr
+          )
+        )
+        expect(Families::Notify).to have_received(:new).with(
+          user: user,
+          kind: :info,
+          title: I18n.t('services.families.memberships.destroy.member_removed', locale: :en),
+          content: I18n.t(
+            'services.families.memberships.destroy.email_has_been_removed_from_the_family_family_name',
+            email: member.email, family_name: family.name, locale: :en
+          )
+        )
+        expect(notifier).to have_received(:call).twice
+      end
 
       it 'revokes full access when the member is removed, without deleting their data' do
         recent_point = create(:point, user: member, timestamp: 1.month.ago.to_i)

@@ -96,12 +96,12 @@ module Families
                         'services.families.invite.sent'
                       end
 
-        Notification.create!(
+        Families::Notify.new(
           user: invited_by,
           kind: :info,
           title: I18n.t('services.families.invite.invitation_sent'),
           content: I18n.t(content_key, email:)
-        )
+        ).call
       end
     rescue StandardError => e
       # Don't fail the entire operation if notification fails

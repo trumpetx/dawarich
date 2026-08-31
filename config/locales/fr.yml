@@ -2293,6 +2293,12 @@ fr:
         language: "Langue"
         your_language: "Votre langue"
         the_interface_emails_and_notifications_will_use_this_language: "L'interface, les e-mails et les notifications utiliseront cette langue."
+    pushover:
+      update:
+        verified: Identifiants Pushover vérifiés
+        disabled: Notifications Pushover désactivées
+        cleared: Identifiants Pushover effacés
+        unavailable: Pushover nécessite la fonctionnalité Family
     integrations:
       index:
         services_nav: Services d'intégration
@@ -2301,6 +2307,7 @@ fr:
           immich: Immich
           photoprism: PhotoPrism
           airtrail: AirTrail
+          pushover: Pushover
         status_connected: Connecté
         status_failed: La dernière tentative de connexion a échoué
         immich_photoprism_integrations: Intégrations Immich & Photoprism
@@ -2356,6 +2363,17 @@ fr:
         refresh_photo_cache: Actualiser le cache des photos
         save_test_connection: Enregistrer et tester la connexion
         sync_now: Synchroniser maintenant
+        pushover_integration: Intégration Pushover
+        pushover_application_token: Jeton API de l'application
+        pushover_application_token_hint: Créez une application sur pushover.net et collez ici son jeton API.
+        pushover_recipient_key: Clé utilisateur ou groupe
+        pushover_recipient_key_hint: Votre clé utilisateur ou une clé de groupe de pushover.net.
+        pushover_enabled: Envoyer les notifications Family via Pushover
+        pushover_secret_saved: Enregistré — laissez vide pour conserver
+        pushover_save_validate: Enregistrer et valider
+        pushover_clear_title: Effacer les identifiants
+        pushover_clear_hint: Supprime les identifiants Pushover stockés sur cette instance.
+        pushover_clear_credentials: Effacer les identifiants
         settings: Paramètres
     subscriptions:
       index:
@@ -4485,6 +4503,12 @@ fr:
         an_error_occurred: Une erreur s'est produite
         not_authorized: Vous n'êtes pas autorisé à répondre à cette demande
         no_longer_actionable: Cette demande a expiré ou a déjà reçu une réponse
+        accepted_title: Demande de localisation acceptée
+        accepted_content: "%{email} a accepté votre demande de localisation."
+        declined_title: Demande de localisation refusée
+        declined_content: "%{email} a refusé votre demande de localisation."
+        expired_title: Demande de localisation expirée
+        expired_content: "Votre demande de localisation à %{email} a expiré."
       update_location_sharing:
         update_failed: Échec de mise à jour de la configuration de partage de localisation
         unexpected_error: Une erreur s'est produite lors de la mise à jour du partage

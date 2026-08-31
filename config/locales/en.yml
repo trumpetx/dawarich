@@ -1519,6 +1519,12 @@ en:
         display_a_gem_icon_next_to_your_profile_to_show: Display a gem icon next to your profile to show your supporter status
         general_settings: General settings
         save_changes: Save changes
+    pushover:
+      update:
+        verified: Pushover credentials verified
+        disabled: Pushover notifications disabled
+        cleared: Pushover credentials cleared
+        unavailable: Pushover requires the Family feature
     integrations:
       index:
         services_nav: Integration services
@@ -1527,6 +1533,7 @@ en:
           immich: Immich
           photoprism: PhotoPrism
           airtrail: AirTrail
+          pushover: Pushover
         status_connected: Connected
         status_failed: Last connection attempt failed
         immich_photoprism_integrations: Immich & Photoprism Integrations
@@ -1566,6 +1573,17 @@ en:
         refresh_photo_cache: Refresh photo cache
         save_test_connection: Save & Test Connection
         sync_now: Sync now
+        pushover_integration: Pushover Integration
+        pushover_application_token: Application API token
+        pushover_application_token_hint: Create an application at pushover.net and paste its API token here.
+        pushover_recipient_key: User or group key
+        pushover_recipient_key_hint: Your user key or a group key from pushover.net.
+        pushover_enabled: Send Family notifications via Pushover
+        pushover_secret_saved: Saved — leave blank to keep
+        pushover_save_validate: Save & Validate
+        pushover_clear_title: Clear credentials
+        pushover_clear_hint: Remove stored Pushover credentials from this instance.
+        pushover_clear_credentials: Clear credentials
         settings: Settings
     subscriptions:
       index:
@@ -3368,6 +3386,12 @@ en:
         an_error_occurred: An error occurred
         not_authorized: You are not authorized to respond to this request
         no_longer_actionable: This request has expired or already been responded to
+        accepted_title: Location Request Accepted
+        accepted_content: "%{email} accepted your location request."
+        declined_title: Location Request Declined
+        declined_content: "%{email} declined your location request."
+        expired_title: Location Request Expired
+        expired_content: "Your location request to %{email} expired."
       update_location_sharing:
         update_failed: Failed to update location sharing setting
         unexpected_error: An error occurred while updating location sharing

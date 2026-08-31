@@ -144,6 +144,12 @@ Feel free to change them in the account settings.
 - Provide credentials for Immich or Photoprism (or both!) and Dawarich will automatically import geodata from your photos.
 - You'll also be able to visualize your photos on the map!
 
+#### Pushover Family Notifications
+
+[Pushover](https://pushover.net/) is a hosted service, not part of your self-hosted Dawarich instance. Where the Family feature is available, each user can register their own Pushover application and enter its application token and their user or group key under **Settings > Integrations**; Dawarich stores these credentials encrypted.
+
+Pushover delivers only Family notifications for family creation, invitations sent or accepted, members joining, leaving, or being removed, incoming location requests, and location requests being accepted, declined, or expired.
+
 ### Import Your Data
 - Import from various sources:
   - Google Maps Timeline

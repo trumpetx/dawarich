@@ -1522,6 +1522,12 @@ de:
         display_a_gem_icon_next_to_your_profile_to_show: Zeigt ein Edelstein-Symbol neben deinem Profil an, das deinen Unterstützerstatus kennzeichnet
         general_settings: Allgemeine Einstellungen
         save_changes: Änderungen speichern
+    pushover:
+      update:
+        verified: Pushover-Zugangsdaten verifiziert
+        disabled: Pushover-Benachrichtigungen deaktiviert
+        cleared: Pushover-Zugangsdaten gelöscht
+        unavailable: Pushover erfordert die Familien-Funktion
     integrations:
       index:
         services_nav: Integrationsdienste
@@ -1530,6 +1536,7 @@ de:
           immich: Immich
           photoprism: PhotoPrism
           airtrail: AirTrail
+          pushover: Pushover
         status_connected: Verbunden
         status_failed: Letzter Verbindungsversuch fehlgeschlagen
         immich_photoprism_integrations: Immich & Photoprism-Integrationen
@@ -1569,6 +1576,17 @@ de:
         refresh_photo_cache: Foto-Cache aktualisieren
         save_test_connection: Speichern & Verbindung testen
         sync_now: Jetzt synchronisieren
+        pushover_integration: Pushover-Integration
+        pushover_application_token: API-Anwendungstoken
+        pushover_application_token_hint: Erstelle eine Anwendung auf pushover.net und füge hier deren API-Token ein.
+        pushover_recipient_key: Benutzer- oder Gruppenschlüssel
+        pushover_recipient_key_hint: Dein Benutzerschlüssel oder ein Gruppenschlüssel von pushover.net.
+        pushover_enabled: Familienbenachrichtigungen per Pushover senden
+        pushover_secret_saved: Gespeichert — zum Behalten leer lassen
+        pushover_save_validate: Speichern & Validieren
+        pushover_clear_title: Zugangsdaten löschen
+        pushover_clear_hint: Gespeicherte Pushover-Zugangsdaten von dieser Instanz entfernen.
+        pushover_clear_credentials: Zugangsdaten löschen
         settings: Einstellungen
     subscriptions:
       index:
@@ -3442,6 +3460,12 @@ de:
         an_error_occurred: Ein Fehler ist aufgetreten
         not_authorized: Du bist nicht berechtigt, auf diese Anfrage zu antworten
         no_longer_actionable: Diese Anfrage ist abgelaufen oder wurde bereits beantwortet
+        accepted_title: Standortanfrage angenommen
+        accepted_content: "%{email} hat deine Standortanfrage angenommen."
+        declined_title: Standortanfrage abgelehnt
+        declined_content: "%{email} hat deine Standortanfrage abgelehnt."
+        expired_title: Standortanfrage abgelaufen
+        expired_content: "Deine Standortanfrage an %{email} ist abgelaufen."
       update_location_sharing:
         update_failed: Aktualisierung der Standortfreigabe fehlgeschlagen
         unexpected_error: Beim Aktualisieren der Standortfreigabe ist ein Fehler aufgetreten

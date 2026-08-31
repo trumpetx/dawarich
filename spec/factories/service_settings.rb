@@ -28,5 +28,13 @@ FactoryBot.define do
       config { {} }
       api_key { 'test-api-key' }
     end
+
+    trait :pushover do
+      service { :notifications }
+      provider { 'pushover' }
+      config { {} }
+      application_token { 'a' * 30 }
+      recipient_key { 'b' * 30 }
+    end
   end
 end

@@ -19,6 +19,8 @@ module Integrations
 
       if service == 'geocoding'
         geocoding_config.enabled?
+      elsif service == 'pushover'
+        pushover_setting.present?
       else
         settings["#{service}_url"].present? && settings["#{service}_api_key"].present?
       end
@@ -40,9 +42,15 @@ module Integrations
 
       if service == 'geocoding'
         geocoding_status
+      elsif service == 'pushover'
+        normalize(pushover_setting.config.fetch('connection_status', nil))
       else
         normalize(settings["#{service}_connection_status"])
       end
+    end
+
+    def pushover_setting
+      @pushover_setting ||= user.service_settings.service_notifications.find_by(provider: 'pushover', active: true)
     end
 
     def settings

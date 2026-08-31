@@ -3,7 +3,7 @@
 class ServiceSetting < ApplicationRecord
   belongs_to :user
 
-  enum :service, { geocoding: 0 }, prefix: :service
+  enum :service, { geocoding: 0, notifications: 1 }, prefix: :service
 
   encrypts :credentials
 
@@ -33,13 +33,23 @@ class ServiceSetting < ApplicationRecord
   end
 
   def api_key=(value)
-    hash = credentials_hash
-    if value.present?
-      hash['api_key'] = value.to_s.strip
-    else
-      hash.delete('api_key')
-    end
-    self.credentials = hash.empty? ? nil : hash.to_json
+    write_credential('api_key', value)
+  end
+
+  def application_token
+    credentials_hash['application_token']
+  end
+
+  def application_token=(value)
+    write_credential('application_token', value)
+  end
+
+  def recipient_key
+    credentials_hash['recipient_key']
+  end
+
+  def recipient_key=(value)
+    write_credential('recipient_key', value)
   end
 
   def host
@@ -76,7 +86,21 @@ class ServiceSetting < ApplicationRecord
   private
 
   def schema
-    @schema ||= ServiceSettings::GeocodingSchema.new(self) if service_geocoding?
+    if service_geocoding?
+      ServiceSettings::GeocodingSchema.new(self)
+    elsif service_notifications?
+      ServiceSettings::NotificationsSchema.new(self)
+    end
+  end
+
+  def write_credential(key, value)
+    hash = credentials_hash
+    if value.present?
+      hash[key] = value.to_s.strip
+    else
+      hash.delete(key)
+    end
+    self.credentials = hash.empty? ? nil : hash.to_json
   end
 
   def normalize_by_schema

@@ -1,0 +1,51 @@
+<% setting = current_user.service_settings.service_notifications.find_by(provider: 'pushover') %>
+<div class="rounded-box border border-base-content/10 bg-base-200 max-w-3xl">
+  <%= form_with scope: :pushover, url: settings_pushover_path, method: :patch, data: { turbo: false } do |f| %>
+    <div class="card-body space-y-5">
+      <div class="flex items-center gap-3">
+        <%= integration_icon('pushover', css: 'size-6') %>
+        <h2 class="text-xl font-semibold"><%= t('settings.integrations.index.pushover_integration') %></h2>
+      </div>
+      <div class="form-control w-full max-w-md">
+        <%= f.label :application_token, class: 'label' do %>
+          <span class="label-text font-medium"><%= t('settings.integrations.index.pushover_application_token') %></span>
+        <% end %>
+        <%= f.password_field :application_token, class: 'input input-bordered w-full',
+              placeholder: setting&.application_token.present? ? t('settings.integrations.index.pushover_secret_saved') : 'azGDORePK8GAHa7uQwXTYy5C2wPnD2' %>
+        <span class="label-text-alt mt-1 text-base-content/60"><%= t('settings.integrations.index.pushover_application_token_hint') %></span>
+      </div>
+      <div class="form-control w-full max-w-md">
+        <%= f.label :recipient_key, class: 'label' do %>
+          <span class="label-text font-medium"><%= t('settings.integrations.index.pushover_recipient_key') %></span>
+        <% end %>
+        <%= f.password_field :recipient_key, class: 'input input-bordered w-full',
+              placeholder: setting&.recipient_key.present? ? t('settings.integrations.index.pushover_secret_saved') : 'uQiRzpo4DXghDmr9QzzfQu27cmVRsG' %>
+        <span class="label-text-alt mt-1 text-base-content/60"><%= t('settings.integrations.index.pushover_recipient_key_hint') %></span>
+      </div>
+      <div class="form-control">
+        <label class="label cursor-pointer justify-start gap-3">
+          <%= f.check_box :enabled, checked: setting&.active?, class: 'toggle toggle-primary' %>
+          <span class="label-text"><%= t('settings.integrations.index.pushover_enabled') %></span>
+        </label>
+      </div>
+      <div class="card-actions">
+        <%= f.submit t('settings.integrations.index.pushover_save_validate'), class: 'btn btn-primary' %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if setting %>
+    <div class="border-t border-base-content/10 px-8 py-5">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h3 class="font-semibold flex items-center gap-2">
+            <%= t('settings.integrations.index.pushover_clear_title') %>
+          </h3>
+          <span class="label-text-alt text-base-content/60"><%= t('settings.integrations.index.pushover_clear_hint') %></span>
+        </div>
+        <%= button_to t('settings.integrations.index.pushover_clear_credentials'), settings_pushover_path,
+            method: :patch, params: { pushover: { clear: '1' } }, class: 'btn btn-error btn-sm' %>
+      </div>
+    </div>
+  <% end %>
+</div>

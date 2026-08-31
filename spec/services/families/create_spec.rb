@@ -24,6 +24,23 @@ RSpec.describe Families::Create do
       it 'returns true on success' do
         expect(service.call).to be true
       end
+
+      it 'routes the notification through Families::Notify in the user locale' do
+        user.update!(settings: { 'locale' => 'fr' })
+        notifier = instance_double(Families::Notify, call: nil)
+        allow(Families::Notify).to receive(:new).and_return(notifier)
+
+        service.call
+
+        expect(Families::Notify).to have_received(:new).with(
+          user: user,
+          kind: :info,
+          title: I18n.t('services.families.create.family_created', locale: :fr),
+          content: I18n.t('services.families.create.you_ve_successfully_created_the_family_name',
+                          name: 'Test Family', locale: :fr)
+        )
+        expect(notifier).to have_received(:call)
+      end
     end
 
     context 'when user is already in a family' do

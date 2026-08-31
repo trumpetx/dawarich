@@ -1519,6 +1519,12 @@ pl:
         display_a_gem_icon_next_to_your_profile_to_show: Wyświetl ikonę klejnotu obok profilu, aby pokazać status wspierającego
         general_settings: Ustawienia ogólne
         save_changes: Zapisz zmiany
+    pushover:
+      update:
+        verified: Dane Pushover zweryfikowane
+        disabled: Powiadomienia Pushover wyłączone
+        cleared: Dane Pushover wyczyszczone
+        unavailable: Pushover wymaga funkcji Rodzina
     integrations:
       index:
         services_nav: Usługi integracji
@@ -1527,6 +1533,7 @@ pl:
           immich: Immich
           photoprism: PhotoPrism
           airtrail: AirTrail
+          pushover: Pushover
         status_connected: Połączono
         status_failed: Ostatnia próba połączenia nie powiodła się
         immich_photoprism_integrations: Integracje Immich i Photoprism
@@ -1566,6 +1573,17 @@ pl:
         refresh_photo_cache: Odśwież pamięć podręczną zdjęć
         save_test_connection: Zapisz i przetestuj połączenie
         sync_now: Synchronizuj teraz
+        pushover_integration: Integracja Pushover
+        pushover_application_token: Token API aplikacji
+        pushover_application_token_hint: Utwórz aplikację na pushover.net i wklej tutaj jej token API.
+        pushover_recipient_key: Klucz użytkownika lub grupy
+        pushover_recipient_key_hint: Twój klucz użytkownika lub klucz grupy z pushover.net.
+        pushover_enabled: Wysyłaj powiadomienia rodzinne przez Pushover
+        pushover_secret_saved: Zapisano — zostaw puste, aby zachować
+        pushover_save_validate: Zapisz i zweryfikuj
+        pushover_clear_title: Wyczyść dane uwierzytelniające
+        pushover_clear_hint: Usuwa zapisane dane uwierzytelniające Pushover z tej instancji.
+        pushover_clear_credentials: Wyczyść dane uwierzytelniające
         settings: Ustawienia
     subscriptions:
       index:
@@ -3435,6 +3453,12 @@ pl:
         an_error_occurred: Wystąpił błąd
         not_authorized: Nie masz uprawnień, aby odpowiedzieć na tę prośbę
         no_longer_actionable: Ta prośba wygasła lub została już rozpatrzona
+        accepted_title: Prośba o lokalizację zaakceptowana
+        accepted_content: "%{email} zaakceptował Twoją prośbę o lokalizację."
+        declined_title: Prośba o lokalizację odrzucona
+        declined_content: "%{email} odrzucił Twoją prośbę o lokalizację."
+        expired_title: Prośba o lokalizację wygasła
+        expired_content: "Twoja prośba o lokalizację do %{email} wygasła."
       update_location_sharing:
         update_failed: Nie udało się zaktualizować ustawienia udostępniania lokalizacji
         unexpected_error: Wystąpił błąd podczas aktualizacji udostępniania lokalizacji

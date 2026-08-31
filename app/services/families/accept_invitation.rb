@@ -100,24 +100,24 @@ module Families
 
     def send_user_notification
       I18n.with_locale(user.locale) do
-        Notification.create!(
+        Families::Notify.new(
           user: user,
           kind: :info,
           title: I18n.t('services.families.accept_invitation.welcome_to_family'),
           content: I18n.t('services.families.accept_invitation.you_ve_joined_the_family_name',
                           name: invitation.family.name)
-        )
+        ).call
       end
     end
 
     def send_owner_notification
       I18n.with_locale(invitation.family.creator.locale) do
-        Notification.create!(
+        Families::Notify.new(
           user: invitation.family.creator,
           kind: :info,
           title: I18n.t('services.families.accept_invitation.new_family_member'),
           content: I18n.t('services.families.accept_invitation.email_has_joined_your_family', email: user.email)
-        )
+        ).call
       end
     rescue StandardError => e
       ExceptionReporter.call(e, "Unexpected error in Families::AcceptInvitation: #{e.message}")

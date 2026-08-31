@@ -18,6 +18,22 @@ class Families::RespondToLocationRequest
 
       decision == :accept ? accept! : decline!
     end
+
+    I18n.with_locale(request.requester.locale) do
+      key = "services.families.respond_to_location_request.#{request.status}"
+      url = if request.accepted?
+              Rails.application.routes.url_helpers.family_url(**ActionMailer::Base.default_url_options)
+            end
+
+      Families::Notify.new(
+        user: request.requester,
+        kind: :info,
+        title: I18n.t("#{key}_title"),
+        content: I18n.t("#{key}_content", email: request.target_user.email),
+        url: url
+      ).call
+    end
+
     Result.new(success?: true, payload: { success: true, status: request.status }, status: :ok)
   rescue StandardError => e
     ExceptionReporter.call(e, "Error in Families::RespondToLocationRequest: #{e.message}")

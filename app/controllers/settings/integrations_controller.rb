@@ -38,9 +38,14 @@ class Settings::IntegrationsController < ApplicationController
   end
 
   def available_services
-    return Integrations::Status::SERVICES if DawarichSettings.self_hosted?
+    services = if DawarichSettings.self_hosted?
+                 Integrations::Status::SERVICES
+               else
+                 Integrations::Status::PHOTO_SERVICES
+               end
+    return services unless DawarichSettings.family_feature_available_for?(current_user)
 
-    Integrations::Status::PHOTO_SERVICES
+    services + %w[pushover]
   end
 
   def prepare_geocoding

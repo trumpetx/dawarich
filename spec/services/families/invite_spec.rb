@@ -41,6 +41,22 @@ RSpec.describe Families::Invite do
       it 'returns true' do
         expect(service.call).to be true
       end
+
+      it 'routes the notification through Families::Notify in the inviter locale' do
+        owner.update!(settings: { 'locale' => 'fr' })
+        notifier = instance_double(Families::Notify, call: nil)
+        allow(Families::Notify).to receive(:new).and_return(notifier)
+
+        service.call
+
+        expect(Families::Notify).to have_received(:new).with(
+          user: owner,
+          kind: :info,
+          title: I18n.t('services.families.invite.invitation_sent', locale: :fr),
+          content: I18n.t('services.families.invite.sent_self_hosted', email: email, locale: :fr)
+        )
+        expect(notifier).to have_received(:call)
+      end
     end
 
     context 'when inviter is not family owner' do

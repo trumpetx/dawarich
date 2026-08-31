@@ -45,6 +45,42 @@ RSpec.describe Integrations::Status do
     end
   end
 
+  describe 'pushover' do
+    it 'returns false without a pushover setting' do
+      expect(status.configured?('pushover')).to be false
+    end
+
+    it 'returns false when the pushover setting is inactive' do
+      create(:service_setting, :pushover, user: user, active: false, config: { 'connection_status' => 'ok' })
+
+      expect(status.configured?('pushover')).to be false
+    end
+
+    it 'returns true for an active pushover setting' do
+      create(:service_setting, :pushover, user: user, active: true)
+
+      expect(status.configured?('pushover')).to be true
+    end
+
+    it 'returns :connected when the last validation succeeded' do
+      create(:service_setting, :pushover, user: user, active: true, config: { 'connection_status' => 'ok' })
+
+      expect(status.status('pushover')).to eq(:connected)
+    end
+
+    it 'returns :failed when the last validation failed' do
+      create(:service_setting, :pushover, user: user, active: true, config: { 'connection_status' => 'failed' })
+
+      expect(status.status('pushover')).to eq(:failed)
+    end
+
+    it 'returns nil for an active setting without a recorded result' do
+      create(:service_setting, :pushover, user: user, active: true)
+
+      expect(status.status('pushover')).to be_nil
+    end
+  end
+
   describe '#status' do
     it 'returns nil for an unconfigured service' do
       expect(status.status('immich')).to be_nil

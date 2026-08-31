@@ -1470,6 +1470,12 @@ ca:
         display_a_gem_icon_next_to_your_profile_to_show: Mostra una icona de gemma al costat del teu perfil per indicar el teu estat de col·laborador
         general_settings: Configuració general
         save_changes: Desa els canvis
+    pushover:
+      update:
+        verified: Credencials de Pushover verificades
+        disabled: Notificacions de Pushover desactivades
+        cleared: Credencials de Pushover esborrades
+        unavailable: Pushover requereix la funció Family
     integrations:
       index:
         immich_photoprism_integrations: Integracions d'Immich i Photoprism
@@ -1509,6 +1515,17 @@ ca:
         refresh_photo_cache: Actualitza la memòria cau de fotos
         save_test_connection: Desa i prova la connexió
         sync_now: Sincronitza ara
+        pushover_integration: "Integració de Pushover"
+        pushover_application_token: "Token API de l'aplicació"
+        pushover_application_token_hint: "Crea una aplicació a pushover.net i enganxa aquí el seu token API."
+        pushover_recipient_key: "Clau d'usuari o de grup"
+        pushover_recipient_key_hint: "La teva clau d'usuari o una clau de grup de pushover.net."
+        pushover_enabled: "Envia notificacions familiars mitjançant Pushover"
+        pushover_secret_saved: "Desat — deixa-ho en blanc per conservar-lo"
+        pushover_save_validate: Desa i valida
+        pushover_clear_title: Esborra les credencials
+        pushover_clear_hint: Elimina les credencials de Pushover emmagatzemades en aquesta instància.
+        pushover_clear_credentials: Esborra les credencials
         settings: Configuració
         services_nav: "Serveis d'integració"
         services:
@@ -1516,6 +1533,7 @@ ca:
           immich: "Immich"
           photoprism: "PhotoPrism"
           airtrail: "AirTrail"
+          pushover: "Pushover"
         status_connected: "Connectat"
         status_failed: "L'últim intent de connexió ha fallat"
     subscriptions:
@@ -3388,6 +3406,12 @@ ca:
         an_error_occurred: "S'ha produït un error"
         not_authorized: "No tens autorització per respondre a aquesta sol·licitud"
         no_longer_actionable: "Aquesta sol·licitud ha caducat o ja s'hi ha respost"
+        accepted_title: Sol·licitud d'ubicació acceptada
+        accepted_content: "%{email} ha acceptat la teva sol·licitud d'ubicació."
+        declined_title: Sol·licitud d'ubicació rebutjada
+        declined_content: "%{email} ha rebutjat la teva sol·licitud d'ubicació."
+        expired_title: Sol·licitud d'ubicació caducada
+        expired_content: "La teva sol·licitud d'ubicació a %{email} ha caducat."
     fit:
       importer:
         fit_parsing_error_message: 'Error en analitzar el FIT: %{message}'
